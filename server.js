@@ -7,7 +7,7 @@ require("dotenv").config();
 
 const app = express();
 const PORT = process.env.PORT || 8000;
-const netlifyFrontendURL = 'https://ibento.co/'; 
+const netlifyFrontendURL = 'https://ibento.co'; 
 
 
 app.use(cors({
@@ -35,7 +35,7 @@ async function getCollection() {
   if (!collection) {
     try {
       await client.connect();
-      const database = client.db("Ibento");
+      const database = client.db("test");
       collection = database.collection("events");
       console.log("Connected to MongoDB");
     } catch (error) {
