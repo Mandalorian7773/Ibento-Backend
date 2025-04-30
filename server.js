@@ -6,8 +6,8 @@ const { MongoClient, ObjectId } = require("mongodb");
 require("dotenv").config();
 
 const app = express();
-const PORT = process.env.PORT || 8000;
-const netlifyFrontendURL = 'https://ibento.co'; 
+const PORT = process.env.PORT || 4000;
+const netlifyFrontendURL = 'https://ibento.co/'; 
 
 
 app.use(cors({
@@ -22,7 +22,7 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
-
+// MongoDB Connection
 const uri = process.env.MONGODB_URI;
 if (!uri) {
   console.error("MONGODB_URI is not set in the environment variables.");
@@ -46,11 +46,12 @@ async function getCollection() {
   return collection;
 }
 
+// Routes
 app.get("/", (req, res) => {
   res.send("Welcome to the Event Management Backend!");
 });
 
-
+// Add Event
 app.post("/events", async (req, res) => {
   try {
     const collection = await getCollection();
@@ -63,7 +64,7 @@ app.post("/events", async (req, res) => {
   }
 });
 
-
+// Fetch Events with Pagination and Filtering
 app.get("/events", async (req, res) => {
   try {
     const { page = 1, limit = 10, city } = req.query;
@@ -84,6 +85,7 @@ app.get("/events", async (req, res) => {
   }
 });
 
+// Fetch Event by ID
 app.get("/events/:id", async (req, res) => {
   try {
     const id = new ObjectId(req.params.id);
@@ -99,7 +101,7 @@ app.get("/events/:id", async (req, res) => {
   }
 });
 
-
+// Update Event
 app.put("/events/:id", async (req, res) => {
   try {
     const id = new ObjectId(req.params.id);
@@ -116,7 +118,7 @@ app.put("/events/:id", async (req, res) => {
   }
 });
 
-
+// Delete Event
 app.delete("/events/:id", async (req, res) => {
   try {
     const id = new ObjectId(req.params.id);
@@ -132,13 +134,13 @@ app.delete("/events/:id", async (req, res) => {
   }
 });
 
-
+// Error Handling Middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ error: "Internal Server Error" });
 });
 
-
+// Start Server
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
